@@ -41,7 +41,7 @@ The book is work in progress and the TOC as well as the actual chapters will evo
 	
 	* *External Table*
 
-4. **[Setting up the example table](#setting_up_the_example_table)**
+4. **[Setting up the example table](#settinguptheexampletable)**
 
 5. **[Query](#query)**
 	* *SELECT ... WHERE ...*
@@ -190,7 +190,7 @@ SELECT * FROM country_list;
 ```
 
 
-<a id="setting_up_the_example_table"></a>
+<a id="settinguptheexampletable"></a>
 #4. Setting up the example table#
 ([⇪ Table of Contents](#toc))
 
