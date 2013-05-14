@@ -53,7 +53,12 @@ The book is work in progress and the TOC as well as the actual chapters will evo
 
 7. **Joining Tables**
 
-6. **...**
+8. **[Data Storage Formats](#datastorageformats)**
+	* *TextFile*
+	* *SequenceFile*
+	* *RCFile*
+	* *ORC*
+	* *Parquet*
 
 6. **...**
 
@@ -289,5 +294,33 @@ SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
 ##SELECT ... SORT BY ...##
 
 ...
+
+[Here be dragons]
+
+<a id="datastorageformats"></a>
+#8. Data Storage Formats#
+([⇪ Table of Contents](#toc))
+
+##TextFile##
+
+###Delimiters and Gotchas###
+
+###Compression###
+
+##SequenceFile##
+
+##RCFile##
+
+##ORC##
+
+##Parquet##
+
+
+<a id="partitioning"></a>
+#9. Partitioning#
+([⇪ Table of Contents](#toc))
+
+date, region, country, category, boolean ... IS NULL.
+
 
 [Here be dragons]
