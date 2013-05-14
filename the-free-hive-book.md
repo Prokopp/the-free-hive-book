@@ -31,11 +31,11 @@ The original with the latest updates is available as the [The Free Hive Book](ht
 # Table of Contents #
 The book is work in progress and the TOC as well as the actual chapters will evolve.
 
-1. **Introduction**
+1. **[Introduction](#introduction) - What is Hive**
 
-2. **Getting Started - Setup Hive**
+2. **[Getting Started](#gettingstarted) - Setup Hive**
 
-3. **Create, Load, Query, Drop a Table**
+3. **[Create, Load, Select, Drop](#createloadselectdrop) - The basics**
 
 	* *Managed Table*
 	
@@ -68,7 +68,10 @@ The book is work in progress and the TOC as well as the actual chapters will evo
 	* *Limit*
 	* *Parallel Execution*
 
+<a id="introduction"></a>
 #1. Introduction - What is Hive#
+([⇪ Table of Contents](#toc))
+
 (If you know Hive and Hadoop you can safely skip the introduction.)
 
 Apache Hive is a data warehouse system build on top of Hadoop to query *Big Data*. Hive originated at [Facebook and was open sourced in August 2008](https://www.facebook.com/note.php?note_id=89508453919). The challenge Facebook had to address is one faced by many companies since then. Eventually data growth in a company challenges the capabilities of deployed RDBMS or NoSQL systems. Reports and analytics start to take minutes, then hours, and eventually overlap with other queries and the whole system grinds to a halt. Another common scenario companies start processing big data with Hadoop discovers the value of making the data accessible beyond the development team capable of writing complex map-reduce jobs.  
@@ -90,7 +93,10 @@ Hive does not use sophisticated indexes like many RDBMS which are able to answer
 ##What this book will teach##
 You will learn how to access data with Hive.
 
+<a id="gettingstarted"></a>
 #2. Getting Started - Setup Hive#
+([⇪ Table of Contents](#toc))
+
 (You can skip this section if you have access to a Hive CLI (Command Line Interface) or a Hue and Beeswax web interface to Hive.)
 
 Installing Hive for evaluation purposes is best done with a virtual machine provided by one of the popular Hadoop distributions:
@@ -101,7 +107,10 @@ Installing Hive for evaluation purposes is best done with a virtual machine prov
 
 The examples in this book are based on the **Hortonworks Sandbox version 1.2**.
 
-#3. Create, Load, Query, Drop a Table#
+<a id="createloadselectdrop"></a>
+#3. Create, Load, Select, Drop - The basics#
+([⇪ Table of Contents](#toc))
+
 Hive uses a metastore - a database - to store information about the tables it knows. Tables to Hive often are not much more than storing the information where the data is stored and how it is formatted. We do not have to know much about the metastore itself to use Hive though.
 
 ##Managed Table##
