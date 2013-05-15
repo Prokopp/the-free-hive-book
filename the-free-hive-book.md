@@ -46,8 +46,8 @@ The book is work in progress and the TOC as well as the actual chapters will evo
 5. **[Query](#query)**
 	* *SELECT ... WHERE ...*
 	* *SELECT ... ORDER BY ...*
-	* *SELECT ... CLUSTER BY ...*
 	* *SELECT ... SORT BY ...*
+	* *SELECT ... CLUSTER BY ...*
 	
 6. **Normalize Tables**
 
@@ -287,13 +287,20 @@ SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
   ORDER BY trade_2011 DESC;
 ```
 
-##SELECT ... CLUSTER BY ...##
-
-...
+The downside on ordering globally with `ORDER BY` is that it is implemented using a single reducer. Consequently, ordering a large set of data can take a very long time.
 
 ##SELECT ... SORT BY ...##
 
-...
+I cases where you only want to approximate the order or investigate the data the `SORT BY` statement can be used. It sorts the data only in each reducer and not globaly. That can be much faster for large data sets.
+
+```sql
+SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
+  indicator_name = 'Trade (% of GDP)' AND
+  `2011` IS NOT NULL
+  SORT BY trade_2011 DESC;
+```
+
+##SELECT ... CLUSTER BY ...##
 
 [Here be dragons]
 
