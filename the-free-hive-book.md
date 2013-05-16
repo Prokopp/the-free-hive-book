@@ -48,6 +48,7 @@ The book is work in progress and the TOC as well as the actual chapters will evo
 	* *SELECT ... ORDER BY ...*
 	* *SELECT ... SORT BY ...*
 	* *SELECT ... CLUSTER BY ...*
+	* *SELECT ... DISTRIBUTE BY ...*
 	
 6. **Normalize Tables**
 
@@ -301,6 +302,24 @@ SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
 ```
 
 ##SELECT ... CLUSTER BY ...##
+
+Distributed sorting can be very helpful when you have keys to group your sets that you want to order by. For example, we may add another indicator `'Broad money (% of GDP)'` and want the result sorted by indicator to easily split the list in two later.
+
+```sql
+SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
+  (indicator_name = 'Trade (% of GDP)' OR
+  indicator_name = 'Broad money (% of GDP)') AND
+  `2011` IS NOT NULL
+  CLUSTER BY indicator_name;
+```
+
+The above query will return all 2011 results of all countries for the two indicators where the data is available, i.e. not null. The result will be sorted by indicator and since the input was sorted by country already the result is also sorted by country within each indicator.
+
+It is important to understand the computaional benefit. We could have achieved this with a `SORT BY`. However, using `CLUSTER BY` enables Hadoop to distribute the data based on the cluster by key across all computational nodes. It is limited by the cardinality of the key though. If you have only two keys then only two reducers can work in parallel independent of you cluster size.
+
+Examples where `CLUSTER BY` works excellent are where global order is irrelevant. Imagine sorting orders by category and then analyse each category of orders. You may have millions of orders and hundreds of categories. Clustering the sorting would provide a tremendous perfomance improvement since the sort can potentially be done by hundreds of cluster nodes in parallel.
+
+##SELECT ... DISTRIBUTE BY ...##
 
 [Here be dragons]
 
