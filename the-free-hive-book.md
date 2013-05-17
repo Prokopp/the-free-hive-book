@@ -251,7 +251,7 @@ We can check if the schema from the create statement aligns with the data we upl
 SELECT * FROM wdi;
 ```
 
-The above statement returns all columns and all rows.
+The above statement returns all columns and all rows from the table `wdi`.
 
 ##SELECT ... WHERE ...##
 
@@ -320,6 +320,28 @@ It is important to understand the computaional benefit. We could have achieved t
 Examples where `CLUSTER BY` works excellent are where global order is irrelevant. Imagine sorting orders by category and then analyse each category of orders. You may have millions of orders and hundreds of categories. Clustering the sorting would provide a tremendous perfomance improvement since the sort can potentially be done by hundreds of cluster nodes in parallel.
 
 ##SELECT ... DISTRIBUTE BY ...##
+
+`DISTRIBUTE BY` tells Hive by which column to organise the data when it is sent to the reducers. We coul instead of using `CLUSTER BY` in the previous example use `DISTRIBUTE BY` to ensure every reducer gets a complete sets of indicators.
+
+```sql
+SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
+  (indicator_name = 'Trade (% of GDP)' OR
+  indicator_name = 'Broad money (% of GDP)') AND
+  `2011` IS NOT NULL
+  DISTRIBUTE BY indicator_name;
+```
+
+The difference is that `DISTRIBUTE BY` does not sort the result. It ensures that all rows with the sme indicator are sent to the same reducer but it does not sort them as `CLUSTER BY`. The latter is in fact only syntactic sugar for a combination of `DISTRIBUTE BY` and `SORT BY`. The latter adding the local sorting on each reducer.
+
+
+```sql
+SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
+  (indicator_name = 'Trade (% of GDP)' OR
+  indicator_name = 'Broad money (% of GDP)') AND
+  `2011` IS NOT NULL
+  DISTRIBUTE BY indicator_name
+  SORT BY indicator_name;
+```
 
 [Here be dragons]
 
