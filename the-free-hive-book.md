@@ -1,4 +1,4 @@
-![](hive-logo.png "Apache Hive (Image © Aaron Newton, http://blog.cloudera.com/blog/2009/04/hive-and-jobtracker-needed-logos/)")
+![](images/hive-logo.png "Apache Hive (Image © Aaron Newton, http://blog.cloudera.com/blog/2009/04/hive-and-jobtracker-needed-logos/)")
 
 # The _Free_ Hive Book #
 
@@ -36,9 +36,7 @@ The book is work in progress and the TOC as well as the actual chapters will evo
 2. **[Getting Started](#gettingstarted) - Setup Hive**
 
 3. **[Create, Load, Select, Drop](#createloadselectdrop) - The basics**
-
 	* *Managed Table*
-	
 	* *External Table*
 
 4. **[Setting up the example table](#settinguptheexampletable)**
@@ -321,7 +319,7 @@ Examples where `CLUSTER BY` works excellent are where global order is irrelevant
 
 ##SELECT ... DISTRIBUTE BY ...##
 
-`DISTRIBUTE BY` tells Hive by which column to organise the data when it is sent to the reducers. We coul instead of using `CLUSTER BY` in the previous example use `DISTRIBUTE BY` to ensure every reducer gets a complete sets of indicators.
+`DISTRIBUTE BY` tells Hive by which column to organise the data when it is sent to the reducers. We could instead of using `CLUSTER BY` in the previous example use `DISTRIBUTE BY` to ensure every reducer gets a complete set of indicators.
 
 ```sql
 SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
@@ -331,8 +329,13 @@ SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
   DISTRIBUTE BY indicator_name;
 ```
 
-The difference is that `DISTRIBUTE BY` does not sort the result. It ensures that all rows with the sme indicator are sent to the same reducer but it does not sort them as `CLUSTER BY`. The latter is in fact only syntactic sugar for a combination of `DISTRIBUTE BY` and `SORT BY`. The latter adding the local sorting on each reducer.
+![DISTRIBUTE BY indicator_name](images/distribute_by_distribute_by_indicator_name.png "SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
+  (indicator_name = 'Trade (% of GDP)' OR
+  indicator_name = 'Broad money (% of GDP)') AND
+  `2011` IS NOT NULL
+  DISTRIBUTE BY indicator_name;")
 
+If you ran the example on the Hortonworks VM or any other setup with one reducer your query result will look like the rows are not organised by indicator names. The difference is that `DISTRIBUTE BY` does not sort the result. It ensures that all rows with the same indicator are sent to the same reducer but it does not sort them as `CLUSTER BY`. Consequently, all rows were sent to the one reducer you have and the output is mixed. `CLUSTER BY` is in fact only syntactic sugar for a combination of `DISTRIBUTE BY` and `SORT BY`. The latter adding the local sorting on each reducer.
 
 ```sql
 SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
@@ -342,6 +345,15 @@ SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
   DISTRIBUTE BY indicator_name
   SORT BY indicator_name;
 ```
+
+![DISTRIBUTE & SORT BY indicator_name](images/distribute_sort_by_indicator_name.png "SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
+  (indicator_name = 'Trade (% of GDP)' OR
+  indicator_name = 'Broad money (% of GDP)') AND
+  `2011` IS NOT NULL
+  DISTRIBUTE BY indicator_name
+  SORT BY indicator_name;")
+
+The result should be equivalent with the cluster example and in each reducer the rows were sorted.
 
 [Here be dragons]
 
