@@ -50,7 +50,11 @@ The book is work in progress and the TOC as well as the actual chapters will evo
 	
 6. **Normalize Tables**
 
-7. **Joining Tables**
+7. **[Joining Tables](#joiningtables)**
+	* *JOIN*
+	* *FULL OUTER JOIN*
+	* *LEFT OUTER JOIN*
+	* *RIGHT OUTER JOIN*
 
 8. **[Data Storage Formats](#datastorageformats)**
 	* *TextFile*
@@ -81,14 +85,14 @@ The book is work in progress and the TOC as well as the actual chapters will evo
 Apache Hive is a data warehouse system build on top of Hadoop to query *Big Data*. Hive originated at [Facebook and was open sourced in August 2008](https://www.facebook.com/note.php?note_id=89508453919). The challenge Facebook had to address is one faced by many companies since then. Eventually data growth in a company challenges the capabilities of deployed RDBMS or NoSQL systems. Reports and analytics start to take minutes, then hours, and eventually overlap with other queries and the whole system grinds to a halt. Another common scenario companies start processing big data with Hadoop discovers the value of making the data accessible beyond the development team capable of writing complex map-reduce jobs.  
 
 ##What is Big Data##
-The term Big Data is freely used in this context. A colleague defined Big Data jokingly as anything beyond one million rows - Microsoft Excels row limit. The underlying point is that Big Data is a point of view and can be generalized as the point where simple solutions and deployed technology fail.
+The term Big Data is freely used in this context. A colleague defined Big Data jokingly as anything beyond one million rows - Microsoft Excels row limit. The underlying point is that Big Data is a point of view and can be generalised as the point where simple solutions and deployed technology fail.
 
-The subsequent question is if scaling and investing heavily in it is the most economical solution. Commercial large-scale data warehouse solutions are very expensive. Furthermore, some of the data collected today, e.g. poorly structured or highly denormalized data, can be impractical to manage with these systems. The Hadoop ecosystem regularly is utilized to scale data processing in a feasible manner. Hadoop becomes either a replacement or a batch process addition to the existing infrastructure for data analysis, extraction, loading, transformation, reporting, and machine learning.
+The subsequent question is if scaling and investing heavily in it is the most economical solution. Commercial large-scale data warehouse solutions are very expensive. Furthermore, some of the data collected today, e.g. poorly structured or highly denormalized data, can be impractical to manage with these systems. The Hadoop ecosystem regularly is utilised to scale data processing in a feasible manner. Hadoop becomes either a replacement or a batch process addition to the existing infrastructure for data analysis, extraction, loading, transformation, reporting, and machine learning.
 
 ##Accessing Big Data##
-The downside, which Facebook encountered, was that data stored in Hadoop is inaccessible to business users. There are higher-level languages like [Pig](https://pig.apache.org/), [Cascading](http://www.cascading.org/), [Crunch](http://crunch.apache.org) or [Scalding](https://github.com/twitter/scalding). They are, however, geared towards software developers that want to avoid the verbosity of pure Java map-reduce development. Even Pig, a popular data-flow language, still requires users to learn a completely new skill. Facebook realized that most of their users already had a common skill - they knew SQL. Hive was developed to give access to data stored in Hadoop translating SQL-like statements into complex map-reduce jobs reading and processing data on large distributed scale.
+The downside, which Facebook encountered, was that data stored in Hadoop is inaccessible to business users. There are higher-level languages like [Pig](https://pig.apache.org/), [Cascading](http://www.cascading.org/), [Crunch](http://crunch.apache.org) or [Scalding](https://github.com/twitter/scalding). They are, however, geared towards software developers that want to avoid the verbosity of pure Java map-reduce development. Even Pig, a popular data-flow language, still requires users to learn a completely new skill. Facebook realised that most of their users already had a common skill - they knew SQL. Hive was developed to give access to data stored in Hadoop translating SQL-like statements into complex map-reduce jobs reading and processing data on large distributed scale.
 
-##Democratizing Big Data##
+##Democratising Big Data##
 Hive is a success story. Today, Facebook's largest Hadoop cluster consists of thousands of computers providing a combined storage of 150 Petabytes - roughly 150,000,000 Gigabytes. Hive provides access to literally thousands of employees to the data running together thousands of map-reduce jobs every day using Hive. The additional training for employees knowing SQL to use Hive is minimal. Most statements can be expressed equivalently and full SQL support is coming to Hive very soon.
 
 ##What Hive is not##
@@ -161,7 +165,7 @@ The table and the HDFS directory and file(s) are deleted.
 
 
 ##External Table##
-So far the queries and behavior of Hive has not been very different to SQL systems. Hive's separation of data location and storing the schema in a metastore enables it to create tables pointing to existing data, to read, query, and transform it, and then drop the tables without touching the original data on HDFS.
+So far the queries and behaviour of Hive has not been very different to SQL systems. Hive's separation of data location and storing the schema in a metastore enables it to create tables pointing to existing data, to read, query, and transform it, and then drop the tables without touching the original data on HDFS.
 
 These unmanaged tables make Hive powerful as a tool that queries outputs from other processes and systems. The terminology used is an extension of the SQL `CREATE TABLE` statement. Let us do the above example again with an external table instead to illustrate the difference.
 
@@ -237,7 +241,7 @@ LOCATION '/user/sandbox/wdi';
 The table is empty since we have not loaded any data yet. Hive created a folder at `/user/sandbox/wdi` on HDFS for us and we can copy data there to appear in the tables.
 
 ##Put the data on HDFS##
-We first place the data on HDFS for Hive and then create an external table for the data. Upload the `wdi_data.tsv.gz` file to the new HDFS `/user/sandbox/wdi` folder. The file is now located on the distributed HDFS file system and can be read by Hadoop and Hive. The file is Gzip compressed as indicated by the `.gz` postfix. Hive recognizes this format and automatically decompresses the file at query time.
+We first place the data on HDFS for Hive and then create an external table for the data. Upload the `wdi_data.tsv.gz` file to the new HDFS `/user/sandbox/wdi` folder. The file is now located on the distributed HDFS file system and can be read by Hadoop and Hive. The file is Gzip compressed as indicated by the `.gz` postfix. Hive recognises this format and automatically decompresses the file at query time.
 
 <a id="query"></a>
 #5. Query#
@@ -290,7 +294,7 @@ The downside on ordering globally with `ORDER BY` is that it is implemented usin
 
 ##SELECT ... SORT BY ...##
 
-I cases where you only want to approximate the order or investigate the data the `SORT BY` statement can be used. It sorts the data only in each reducer and not globaly. That can be much faster for large data sets.
+I cases where you only want to approximate the order or investigate the data the `SORT BY` statement can be used. It sorts the data only in each reducer and not globally. That can be much faster for large data sets.
 
 ```sql
 SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
@@ -313,9 +317,9 @@ SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
 
 The above query will return all 2011 results of all countries for the two indicators where the data is available, i.e. not null. The result will be sorted by indicator and since the input was sorted by country already the result is also sorted by country within each indicator.
 
-It is important to understand the computaional benefit. We could have achieved this with a `SORT BY`. However, using `CLUSTER BY` enables Hadoop to distribute the data based on the cluster by key across all computational nodes. It is limited by the cardinality of the key though. If you have only two keys then only two reducers can work in parallel independent of you cluster size.
+It is important to understand the computational benefit. We could have achieved this with a `SORT BY`. However, using `CLUSTER BY` enables Hadoop to distribute the data based on the cluster by key across all computational nodes. It is limited by the cardinality of the key though. If you have only two keys then only two reducers can work in parallel independent of you cluster size.
 
-Examples where `CLUSTER BY` works excellent are where global order is irrelevant. Imagine sorting orders by category and then analyse each category of orders. You may have millions of orders and hundreds of categories. Clustering the sorting would provide a tremendous perfomance improvement since the sort can potentially be done by hundreds of cluster nodes in parallel.
+Examples where `CLUSTER BY` works excellent are where global order is irrelevant. Imagine sorting orders by category and then analyse each category of orders. You may have millions of orders and hundreds of categories. Clustering the sorting would provide a tremendous performance improvement since the sort can potentially be done by hundreds of cluster nodes in parallel.
 
 ##SELECT ... DISTRIBUTE BY ...##
 
@@ -356,6 +360,51 @@ SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
 The result should be equivalent with the cluster example and in each reducer the rows were sorted.
 
 [Here be dragons]
+
+<a id="joiningtables"></a>
+#7. Joining Tables#
+([⇪ Table of Contents](#toc))
+
+##JOIN##
+
+Joins are very common operations to combine related tables and *join* them on a shared value.
+
+NoSQL and big data architectures tend to diverge from traditional table designs and normalisations to reduce JOINs. Until recently duplication of columns in tables was seen as wasteful and hard to change. The `wdi` table has a country name and country code column. Traditionally tables would only contain an identifier/code and we would store all country relevant information including the full name in a separate country table. Since storage has become cheap and plentiful we can observe a tendency to duplicate commonly used information in tables like country name to reduce the need for JOINs. This simplifies daily operations, analytics, and saves computation on JOINs on the expense of storage.
+
+However, there are plenty of examples where JOINs are needed. The most common example is the inner JOIN. One situation may be that we have a list of countries like `country_list` table from our introduction example. The question be that we want to know all indicators for this subset of countries for 2011. The query would then be an inner JOIN of `country_list` with `wdi` on the country names to select the rows of interest from `wdi`. Additionally we can add a `WHERE` clause to exclude rows without value for 2011 and order the result nicely by indicators and countries to make it more readable.
+
+```sql
+SELECT w.country_name, w.indicator_name, w.`2011`
+FROM country_list c
+JOIN wdi w
+ON w.country_name = c.name
+WHERE `2011` IS NOT NULL
+ORDER BY w.indicator_name, w.country_name;
+```
+
+We declared the aliases **c** and **w** after mentioning the tables in the query to simplify the query `... FROM country_list c JOIN wdi w ...`, which allows to reference them then like `w.indicator_name` instead of `wdi.indicator_name`.
+
+
+![(INNER) JOIN](images/join_inner.png "SELECT w.country_name, w.indicator_name, w.`2011` FROM country_list c
+JOIN wdi w
+ON w.country_name = c.name
+WHERE `2011` IS NOT NULL
+ORDER BY w.indicator_name, w.country_name;")
+
+The results above show that only rows were used that satisfy the JOIN, i.e. have a matching country name in both `wdi` and `country_list`.
+
+
+##FULL OUTER JOIN##
+
+##LEFT OUTER JOIN##
+
+##RIGHT OUTER JOIN##
+
+##Optimising Joins##
+###Map JOIN###
+`SET hive.auto.convert.join=true;`
+###Avoid NULL values in JOIN###
+`... FROM y JOIN x ON y.a=x.a AND y.a IS NOT NULL ...`
 
 <a id="datastorageformats"></a>
 #8. Data Storage Formats#
