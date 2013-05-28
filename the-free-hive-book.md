@@ -391,10 +391,21 @@ ON w.country_name = c.name
 WHERE `2011` IS NOT NULL
 ORDER BY w.indicator_name, w.country_name;")
 
-The results above show that only rows were used that satisfy the JOIN, i.e. have a matching country name in both `wdi` and `country_list`.
+The results above show that only rows were used that satisfy the JOIN, i.e. have a matching country name in both `wdi` and `country_list`.ma
 
 
 ##FULL OUTER JOIN##
+
+An outer join ensures that the result contains a row for each input table. It does not matter if the left *or* the right side of the join has null values for a right *or* left join condition.
+
+```sql
+SELECT w.country_name, w.indicator_name, w.`2011`
+FROM country_list c
+FULL OUTER JOIN wdi w
+ON w.country_name = c.name
+WHERE `2011` IS NOT NULL
+ORDER BY w.indicator_name, w.country_name;
+```
 
 ##LEFT OUTER JOIN##
 
