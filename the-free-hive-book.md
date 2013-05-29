@@ -365,33 +365,44 @@ The result should be equivalent with the cluster example and in each reducer the
 #7. Joining Tables#
 ([⇪ Table of Contents](#toc))
 
+##Setup Data##
+Create two tables with list of OECD and NATO countries for the join examples.
+
+```sql
+CREATE TABLE oecd_countries (name STRING, year STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
+```
+
+```sql
+CREATE TABLE nato_countries (name STRING);
+```
+Finally go to `/apps/hive/warehouse/nato_countries` and `/apps/hive/warehouse/oecd_countries` in the Hue filebrowser (or use the HDFS put command) and upload `nato_countries.tsv` and `oecd_countries.tsv` in the corresponding directories.
+
+
 ##JOIN##
 
 Joins are very common operations to combine related tables and *join* them on a shared value.
 
 NoSQL and big data architectures tend to diverge from traditional table designs and normalisations to reduce JOINs. Until recently duplication of columns in tables was seen as wasteful and hard to change. The `wdi` table has a country name and country code column. Traditionally tables would only contain an identifier/code and we would store all country relevant information including the full name in a separate country table. Since storage has become cheap and plentiful we can observe a tendency to duplicate commonly used information in tables like country name to reduce the need for JOINs. This simplifies daily operations, analytics, and saves computation on JOINs on the expense of storage.
 
-However, there are plenty of examples where JOINs are needed. The most common example is the inner JOIN. One situation may be that we have a list of countries like `country_list` table from our introduction example. The question be that we want to know all indicators for this subset of countries for 2011. The query would then be an inner JOIN of `country_list` with `wdi` on the country names to select the rows of interest from `wdi`. Additionally we can add a `WHERE` clause to exclude rows without value for 2011 and order the result nicely by indicators and countries to make it more readable.
+However, there are plenty of examples where JOINs are needed. The most common example is the inner JOIN. In our OECD and NATO toy example we can join the two list to see which countries are members of both organisations.
 
 ```sql
-SELECT w.country_name, w.indicator_name, w.`2011`
-FROM country_list c
-JOIN wdi w
-ON w.country_name = c.name
-WHERE `2011` IS NOT NULL
-ORDER BY w.indicator_name, w.country_name;
+SELECT o.name
+FROM oecd_countries o
+JOIN nato_countries n
+ON n.name=o.name;
 ```
 
-We declared the aliases **c** and **w** after mentioning the tables in the query to simplify the query `... FROM country_list c JOIN wdi w ...`, which allows to reference them then like `w.indicator_name` instead of `wdi.indicator_name`.
+We declared the aliases **o** and **n** after mentioning the tables in the query to simplify the query `...ON n.name=o.name;`.
 
 
-![(INNER) JOIN](images/join_inner.png "SELECT w.country_name, w.indicator_name, w.`2011` FROM country_list c
-JOIN wdi w
-ON w.country_name = c.name
-WHERE `2011` IS NOT NULL
-ORDER BY w.indicator_name, w.country_name;")
+![(INNER) JOIN](images/join_inner.png "SELECT o.name
+FROM oecd_countries o
+JOIN nato_countries n
+ON n.name=o.name;")
 
-The results above show that only rows were used that satisfy the JOIN, i.e. have a matching country name in both `wdi` and `country_list`.ma
+The results above show only rows that satisfy the JOIN, i.e. have a matching country name in both `nato_countries` and `oecd_countries`.
 
 
 ##FULL OUTER JOIN##
@@ -399,16 +410,16 @@ The results above show that only rows were used that satisfy the JOIN, i.e. have
 An outer join ensures that the result contains a row for each input table. It does not matter if the left *or* the right side of the join has null values for a right *or* left part of the join.
 
 ```sql
-SELECT
-  c.name AS country_name_list,
-  w.country_name AS country_name_wdi,
-  w.indicator_name,
-  w.`2011`
-FROM country_list c
-FULL OUTER JOIN wdi w
-ON w.country_name = c.name
-ORDER BY w.indicator_name ASC;
+SELECT o.name AS oecd_country, n.name nato_country
+FROM oecd_countries o
+FULL OUTER JOIN nato_countries n
+ON n.name=o.name;
 ```
+
+![FULL OUTER JOIN](images/join_full_outer.png "SELECT o.name AS oecd_country, n.name nato_country
+FROM oecd_countries o
+FULL OUTER JOIN nato_countries n
+ON n.name=o.name;")
 
 ##LEFT OUTER JOIN##
 
