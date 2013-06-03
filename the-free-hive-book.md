@@ -442,6 +442,15 @@ ON n.name=o.name;")
 ###Compression###
 
 ##SequenceFile##
+```sql
+CREATE TABLE country (name STRING, population INT)
+STORED AS SequenceFile;
+```
+The `SequenceFile` format is the Hadoop default and stores data in a binary key-value pairs. It is optimised for fast and block size IO. Most tools in the Hadoop ecosystem can read SequenceFile format.
+
+Hive stored its row data in the value part of the pairs. This format is more efficient than plain text and it can be compresses with the available formats in Hadoop either by value (row) or block (data chunk). The latter is usually more efficient since a compression is more likely to find reducible patterns in a large data block than in a row.
+
+The disadvantage of this format is that Hive has to read and parse every row for every query (presuming no partitioning) to execute the query conditions against it. This can lead to unnecessary read operations if only some rows or some columns are relevant to the query.
 
 ##RCFile##
 
