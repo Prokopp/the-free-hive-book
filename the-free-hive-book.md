@@ -436,6 +436,28 @@ ON n.name=o.name;")
 ([⇪ Table of Contents](#toc))
 
 ##TextFile##
+```sql
+CREATE TABLE country (
+	name STRING,
+	states ARRAY<STRING>,
+	cities_and_size MAP<STRING, INT>,
+	parties STRUCT<name STRING, votes FLOAT, members INT>
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\001'
+COLLECTION ITEMS TERMINATED BY '\002'
+MAP KEYS TERMINATED BY '\003'
+LINES TERMINATED BY '\n'
+STORED AS TextFile;
+```
+The `TextFile` format is the default for Hive. It uses four delimiters to split an output or input file into rows, columns and complex data types. It can be explicitly expressed with the `STORED AS TextFile` expression.
+
+The definition of the delimiters follows the table's schema definition and has to have `ROW FORMAT DELIMITED` prepended. Misleadingly `LINES TERMINATED BY '\n'` is a valid statement. It describes the default splitting of rows by newline character. Unfortunately, this delimiter can not be set to anything else but newline.
+
+Most commonly the field delimiter is changed to comma (`FIELDS TERMINATED BY ','`) or tab (`FIELDS TERMINATED BY '\t'`). The default is 0x01 or ^A also known as Ctrl-A. The collections...
+
+[Here be dragons]
+
 
 ###Delimiters and Gotchas###
 
