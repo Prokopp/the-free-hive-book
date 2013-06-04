@@ -475,7 +475,16 @@ Hive stored its row data in the value part of the pairs. This format is more eff
 The disadvantage of this format is that Hive has to read and parse every row for every query (presuming no partitioning) to execute the query conditions against it. This can lead to unnecessary read operations if only some rows or some columns are relevant to the query.
 
 ##RCFile##
+```sql
+CREATE TABLE country (name STRING, population INT)
+STORED AS RCFile;
+```
 
+The Row Columnar File (RCFile) format combines row and column oriented storage principles. Each file stores one or more row groups, which is a number of rows. The row groups themselves are stored in a columnar structure.
+
+For example, a file may store rows 1-1,000 in the first group and row 1,001 to 2,000 in the next and both groups in one RCFile. The row group itself stores all the columns together. The first group then would save the first column of row 1 to 1,000 and then next column and so forth.
+
+The benefit of grouping columns is a more efficient compression since similar data is near to each other. More importantly query conditions can be pushed down to read only relevant parts of a table. This is especially helpful with wide tables and queries that only apply to a few columns. In these cases Hive can skip large parts of the data to save IO and computing time.
 ##ORC##
 
 ##Parquet##
