@@ -454,10 +454,15 @@ The `TextFile` format is the default for Hive. It uses four delimiters to split 
 
 The definition of the delimiters follows the table's schema definition and has to have `ROW FORMAT DELIMITED` prepended. Misleadingly `LINES TERMINATED BY '\n'` is a valid statement. It describes the default splitting of rows by newline character. Unfortunately, this delimiter can not be set to anything else but newline.
 
-Most commonly the field delimiter is changed to comma (`FIELDS TERMINATED BY ','`) or tab (`FIELDS TERMINATED BY '\t'`). The default is 0x01 or ^A also known as Ctrl-A. The collections...
+Most commonly the field delimiter is changed to comma (`FIELDS TERMINATED BY ','`) or tab (`FIELDS TERMINATED BY '\t'`). The default is 0x01 or ^A also known as Ctrl-A. The default for collection items is 0x02 and 0x03 for map keys.
 
-[Here be dragons]
+It is important understand that Hive does **not** support escaped characters. For example, a sheet saved as a CSV file from Excel may be formated with double quotation to escape commas in fields:
 
+`"One, two, or three.", 1.01, 2012"`
+
+Defining a TEXTFILE input format with comma as a delimiter would not return the expected columns since Hive would parse the row as the following columns:
+
+`"One`, `two`, `or three."`, `1.01`, and `2012`
 
 ###Delimiters and Gotchas###
 
