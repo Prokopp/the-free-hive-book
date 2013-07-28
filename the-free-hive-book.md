@@ -303,27 +303,9 @@ SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
   SORT BY trade_2011 DESC;
 ```
 
-##SELECT ... CLUSTER BY ...##
-
-Distributed sorting can be very helpful when you have keys to group your sets that you want to order by. For example, we may add another indicator `'Broad money (% of GDP)'` and want the result sorted by indicator to easily split the list in two later.
-
-```sql
-SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
-  (indicator_name = 'Trade (% of GDP)' OR
-  indicator_name = 'Broad money (% of GDP)') AND
-  `2011` IS NOT NULL
-  CLUSTER BY indicator_name;
-```
-
-The above query will return all 2011 results of all countries for the two indicators where the data is available, i.e. not null. The result will be sorted by indicator and since the input was sorted by country already the result is also sorted by country within each indicator.
-
-It is important to understand the computational benefit. We could have achieved this with a `SORT BY`. However, using `CLUSTER BY` enables Hadoop to distribute the data based on the cluster by key across all computational nodes. It is limited by the cardinality of the key though. If you have only two keys then only two reducers can work in parallel independent of you cluster size.
-
-Examples where `CLUSTER BY` works excellent are where global order is irrelevant. Imagine sorting orders by category and then analyse each category of orders. You may have millions of orders and hundreds of categories. Clustering the sorting would provide a tremendous performance improvement since the sort can potentially be done by hundreds of cluster nodes in parallel.
-
 ##SELECT ... DISTRIBUTE BY ...##
 
-`DISTRIBUTE BY` tells Hive by which column to organise the data when it is sent to the reducers. We could instead of using `CLUSTER BY` in the previous example use `DISTRIBUTE BY` to ensure every reducer gets a complete set of indicators.
+`DISTRIBUTE BY` tells Hive by which column to organise the data when it is sent to the reducers. We could instead of using `CLUSTER BY` in the previous example use `DISTRIBUTE BY` to ensure every reducer gets all the data for each indicator.
 
 ```sql
 SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
@@ -339,7 +321,13 @@ SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
   `2011` IS NOT NULL
   DISTRIBUTE BY indicator_name;")
 
-If you ran the example on the Hortonworks VM or any other setup with one reducer your query result will look like the rows are not organised by indicator names. The difference is that `DISTRIBUTE BY` does not sort the result. It ensures that all rows with the same indicator are sent to the same reducer but it does not sort them as `CLUSTER BY`. Consequently, all rows were sent to the one reducer you have and the output is mixed. `CLUSTER BY` is in fact only syntactic sugar for a combination of `DISTRIBUTE BY` and `SORT BY`. The latter adding the local sorting on each reducer.
+If you ran the example on the Hortonworks VM or any other setup with one reducer your query result will look like the rows are not organised by indicator names. The difference is that `DISTRIBUTE BY` does not sort the result. It ensures that all rows with the same indicator are sent to the same reducer but it does not sort them.
+
+This can be useful if you write a streaming job with a custom reducer. The reducer, for example, could aggregate data based on the distribution key and does not require the data in order as long as it is complete in regard to the distribution key.
+
+##SELECT ... DISTRIBUTE BY ... SORT BY ...##
+
+Hive queries without custom reducers are more likely to combine a `DISTRIBUTE BY` with a `SORT BY`. Together they result in globally distributed  and locally sorted results, which is faster than `ORDER BY`.
 
 ```sql
 SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
@@ -357,7 +345,36 @@ SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
   DISTRIBUTE BY indicator_name
   SORT BY indicator_name;")
 
-The result should be equivalent with the cluster example and in each reducer the rows were sorted.
+The result ensures that all rows with the same indicator name are grouped and all groups of a reducer are sorted but the global order of the groups is not guaranteed. This is still a very useful combination of commands since we can extend it by additional fields.
+
+```sql
+SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
+  (indicator_name = 'Trade (% of GDP)' OR
+  indicator_name = 'Broad money (% of GDP)') AND
+  `2011` IS NOT NULL
+  DISTRIBUTE BY indicator_name
+  SORT BY indicator_name, country_name;
+```
+
+By simply adding country_name to the sorting we now ensure that each group of indicator_names is also sorted by country_name irrespective of the input order.
+
+##SELECT ... CLUSTER BY ...##
+
+The combination of `DISTRIBUTE BY` with a `SORT BY` is so common that it received its own shorthand in HiveQL - `CLUSTER BY`.
+
+```sql
+SELECT country_name, indicator_name, `2011` AS trade_2011 FROM wdi WHERE
+  (indicator_name = 'Trade (% of GDP)' OR
+  indicator_name = 'Broad money (% of GDP)') AND
+  `2011` IS NOT NULL
+  CLUSTER BY indicator_name;
+```
+
+The above query will return all 2011 results of all countries for the two indicators where the data is available, i.e. not null. The result will be sorted by indicator and since the input was sorted by country already the result is also sorted by country within each indicator.
+
+Using `CLUSTER BY` enables Hadoop to distribute the data based on the cluster by key across all computational nodes. It is limited by the cardinality of the key though. If you have only two keys then only two reducers can work in parallel independent of you cluster size.
+
+Examples where `CLUSTER BY` works excellent are the same as before; where global order is irrelevant. Imagine sorting orders by category and then analyse each category of orders. You may have millions of orders and hundreds of categories. Clustering the sorting would provide a tremendous performance improvement since the sort can potentially be done by hundreds of cluster nodes in parallel.
 
 [Here be dragons]
 
