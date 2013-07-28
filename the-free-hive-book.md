@@ -507,7 +507,10 @@ The Row Columnar File (RCFile) format combines row and column oriented storage p
 For example, a file may store rows 1-1,000 in the first group and row 1,001 to 2,000 in the next and both groups in one RCFile. The row group itself stores all the columns together. The first group then would save the first column of row 1 to 1,000 and then next column and so forth.
 
 The benefit of grouping columns is a more efficient compression since similar data is near to each other. More importantly query conditions can be pushed down to read only relevant parts of a table. This is especially helpful with wide tables and queries that only apply to a few columns. In these cases Hive can skip large parts of the data to save IO and computing time.
+
 ##ORC##
+The ORC file format became generally available with Hive 0.11 although some of its features are yet to be fully realised.ORC should be considered as an alternative to RCFile. ORC goes beyond RCFile and introduces columnar optimised storage (e.g. variable length encoding for integers), large block sizes (better disk IO and fewer file with lower namenode load), basic statistics on columns in a file and simple file indices to skip whole row groups if they don't match a query.
+
 
 ##Parquet##
 
