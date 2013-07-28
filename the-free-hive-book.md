@@ -271,7 +271,7 @@ SELECT `country_name`, `2011` AS trade_2011 FROM wdi
 WHERE indicator_name = 'Trade (% of GDP)';
 ```
 
-We can also exclude empty `NULL` results for the year 2011:
+We can furthermore limit results to data of the year 2011:
 
 ```sql
 SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
@@ -281,7 +281,7 @@ SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
 
 ##SELECT ... ORDER BY ...##
 
-What are the countries with the greatest and the least percentage of trade to GDP ratio? The result of the above query can be ordered by column(s). This is similarly to SQL's `ORDER BY ... (ASC|DESC)` statement. Postfixing the order statement with `ASC` or `DESC` will order it in ascending or descending order:
+Which countries have the largest and smallest percentage of trade to GDP ratio? The result of the above query can be ordered by column(s) with the `ORDER BY ... (ASC|DESC)` statement. Postfixing the order statement with `ASC` or `DESC` will order it in ascending or descending order:
 
 ```sql
 SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
@@ -290,11 +290,11 @@ SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
   ORDER BY trade_2011 DESC;
 ```
 
-The downside on ordering globally with `ORDER BY` is that it is implemented using a single reducer. Consequently, ordering a large set of data can take a very long time.
+The downside on ordering globally with `ORDER BY` is that it is implemented using a single reducer. Consequently, ordering a large set of data can take a very long time. It 
 
 ##SELECT ... SORT BY ...##
 
-I cases where you only want to approximate the order or investigate the data the `SORT BY` statement can be used. It sorts the data only in each reducer and not globally. That can be much faster for large data sets.
+I cases where you only want to approximate the order and investigate the data the `SORT BY` statement can be used. It sorts the data by reducer and not globally, which can be much faster for large data sets.
 
 ```sql
 SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
