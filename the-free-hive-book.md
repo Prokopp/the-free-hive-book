@@ -148,7 +148,7 @@ We want to load data to the table so we need to upload it to HDFS. We know the t
 Go back to the table list and select the `country_list` table. Select `View File Location` and you will be viewing the HDFS directory of where the able stores its data. Upload the `coutry_example.tsv` file into the directory using the file upload function on the top right of the interface.
 
 ###Query a table###
-Hive is very flexible and checks the table's data location for every query. Adding or removing data on the file system is reflected on the table. After adding the file its content is now automatically retrieved as table data. Try it out. Go back to the Beeswax table list and select the `country_list` again. Click on browse data on the left. You should see four countries which are read from the file. You can also query the table to get the same result. Go tot he query editor and execute:
+Hive is very flexible and checks the table's data location for every query. Adding or removing data on the file system is reflected on the table. After adding the file its content is now automatically retrieved as table data. Try it out. Go back to the Beeswax table list and select the `country_list` again. Click on browse data on the left. You should see four countries which are read from the file. You can also query the table to get the same result. Go to the query editor and execute:
 
 ```sql
 SELECT * FROM country_list;
@@ -509,7 +509,7 @@ For example, a file may store rows 1-1,000 in the first group and row 1,001 to 2
 The benefit of grouping columns is a more efficient compression since similar data is near to each other. More importantly query conditions can be pushed down to read only relevant parts of a table. This is especially helpful with wide tables and queries that only apply to a few columns. In these cases Hive can skip large parts of the data to save IO and computing time.
 
 ##ORC##
-The ORC file format became generally available with Hive 0.11 although some of its features are yet to be fully realised.ORC should be considered as an alternative to RCFile. ORC goes beyond RCFile and introduces columnar optimised storage (e.g. variable length encoding for integers), large block sizes (better disk IO and fewer file with lower namenode load), basic statistics on columns in a file and simple file indices to skip whole row groups if they don't match a query.
+The ORC file format became generally available with Hive 0.11 although some of its features are yet to be fully realised. ORC should be considered as an alternative to RCFile. ORC goes beyond RCFile and introduces columnar optimised storage (e.g. variable length encoding for integers), large block sizes (better disk IO and fewer file with lower namenode load), basic statistics on columns in a file and simple file indices to skip whole row groups if they don't match a query.
 
 
 ##Parquet##
