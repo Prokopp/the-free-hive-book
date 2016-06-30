@@ -122,7 +122,7 @@ The examples in this book are based on the **Hortonworks Sandbox version 1.2**.
 Hive uses a metastore - a database - to store information about the tables it knows. Tables to Hive often are not much more than storing the information where the data is stored and how it is formatted. We do not have to know much about the metastore itself to use Hive though.
 
 ##Managed Table##
-Managed tables's data is controlled by Hive. It will create a directory for the data on HDFS and when we drop the table it will delete the data. Later in this chapter we will see that we can manage the data ourselves with an *EXTERNAL* table.
+Managed tables' data is controlled by Hive. It will create a directory for the data on HDFS and when we drop the table it will delete the data. Later in this chapter we will see that we can manage the data ourselves with an *EXTERNAL* table.
 
 ###Creating an empty table###
 Let us create a table, which will be a simple list of all names of all countries. Go to the Beeswax query editor and execute the following query:
