@@ -84,25 +84,25 @@ The book is work in progress and the TOC as well as the actual chapters will evo
 
 Apache Hive is a data warehouse system build on top of Hadoop to query *Big Data*. Hive originated at [Facebook and was open sourced in August 2008](https://www.facebook.com/note.php?note_id=89508453919). The challenge Facebook had to address is one faced by many companies since then. Eventually data growth in a company challenges the capabilities of deployed RDBMS or NoSQL systems. Reports and analytics start to take minutes, then hours, and eventually overlap with other queries and the whole system grinds to a halt. Another common scenario companies start processing big data with Hadoop discovers the value of making the data accessible beyond the development team capable of writing complex map-reduce jobs.  
 
-##What is Big Data##
+## What is Big Data##
 The term Big Data is freely used in this context. A colleague defined Big Data jokingly as anything beyond one million rows - Microsoft Excels row limit. The underlying point is that Big Data is a point of view and can be generalised as the point where simple solutions and deployed technology fail.
 
 The subsequent question is if scaling and investing heavily in it is the most economical solution. Commercial large-scale data warehouse solutions are very expensive. Furthermore, some of the data collected today, e.g. poorly structured or highly denormalized data, can be impractical to manage with these systems. The Hadoop ecosystem regularly is utilised to scale data processing in a feasible manner. Hadoop becomes either a replacement or a batch process addition to the existing infrastructure for data analysis, extraction, loading, transformation, reporting, and machine learning.
 
-##Accessing Big Data##
+## Accessing Big Data##
 The downside, which Facebook encountered, was that data stored in Hadoop is inaccessible to business users. There are higher-level languages like [Pig](https://pig.apache.org/), [Cascading](http://www.cascading.org/), [Crunch](http://crunch.apache.org) or [Scalding](https://github.com/twitter/scalding). They are, however, geared towards software developers that want to avoid the verbosity of pure Java map-reduce development. Even Pig, a popular data-flow language, still requires users to learn a completely new skill. Facebook realised that most of their users already had a common skill - they knew SQL. Hive was developed to give access to data stored in Hadoop translating SQL-like statements into complex map-reduce jobs reading and processing data on large distributed scale.
 
-##Democratising Big Data##
+## Democratising Big Data##
 Hive is a success story. Today, Facebook's largest Hadoop cluster consists of thousands of computers providing a combined storage of 150 Petabytes - roughly 150,000,000 Gigabytes. Hive provides access to literally thousands of employees to the data running together thousands of map-reduce jobs every day using Hive. The additional training for employees knowing SQL to use Hive is minimal. Most statements can be expressed equivalently and full SQL support is coming to Hive very soon.
 
-##What Hive is not##
+## What Hive is not##
 Hive does not use sophisticated indexes like many RDBMS which are able to answer queries in seconds. Hive queries usually take minutes or hours. However, Hive scales very well and can execute queries across data of the magnitude of Petabytes. The Hadoop ecosystem and Hive are under very active development, however, and speedups are achieved with every new iteration. In 2013 many new developments are due to be introduced, a new Hadoop framework that goes beyond map-reduce and manages resources better, and Hive improvements that will make queries on smaller data faster and interactive.
 
-##What this book will teach##
+## What this book will teach##
 You will learn how to access data with Hive.
 
 <a id="gettingstarted"></a>
-#2. Getting Started - Setup Hive#
+# 2. Getting Started - Setup Hive#
 ([⇪ Table of Contents](#toc))
 
 (You can skip this section if you have access to a Hive CLI (Command Line Interface) or a Hue and Beeswax web interface to Hive.)
@@ -116,15 +116,15 @@ Installing Hive for evaluation purposes is best done with a virtual machine prov
 The examples in this book are based on the **Hortonworks Sandbox version 1.2**.
 
 <a id="createloadselectdrop"></a>
-#3. Create, Load, Select, Drop - The basics#
+# 3. Create, Load, Select, Drop - The basics#
 ([⇪ Table of Contents](#toc))
 
 Hive uses a metastore - a database - to store information about the tables it knows. Tables to Hive often are not much more than storing the information where the data is stored and how it is formatted. We do not have to know much about the metastore itself to use Hive though.
 
-##Managed Table##
+## Managed Table##
 Managed tables' data is controlled by Hive. It will create a directory for the data on HDFS and when we drop the table it will delete the data. Later in this chapter we will see that we can manage the data ourselves with an *EXTERNAL* table.
 
-###Creating an empty table###
+### Creating an empty table###
 Let us create a table, which will be a simple list of all names of all countries. Go to the Beeswax query editor and execute the following query:
 
 ```sql
@@ -133,7 +133,7 @@ CREATE TABLE country_list (name STRING);
 
 You can now find the table in the Beeswax table list. Once you selected the table you can view the file location on HDFS which Hive automatically selected and created for you. The table and directory are empty. Note: We can define the location of a new table as we will learn later.
 
-###Describing a table###
+### Describing a table###
 We can get all the information we need about a table through a query too. Go back to the query editor and execute:
 
 ```sql
@@ -142,19 +142,19 @@ DESCRIBE EXTENDED country_list;
 
 The result describes the schema of the table and detailed table information. This includes the location of the table and the information that it uses TextInputFormat which is default setting in the Hortonworks Hive setup.
 
-###Loading data into a table###
+### Loading data into a table###
 We want to load data to the table so we need to upload it to HDFS. We know the table has single column of country name, uses a simple text format, and Hive always uses new line characters to as row delimiters. All we need to do to add data is upload one or several files into the directory linked with the table. The files have to be formatted to have one country name on each line.
 
 Go back to the table list and select the `country_list` table. Select `View File Location` and you will be viewing the HDFS directory of where the able stores its data. Upload the `coutry_example.tsv` file into the directory using the file upload function on the top right of the interface.
 
-###Query a table###
+### Query a table###
 Hive is very flexible and checks the table's data location for every query. Adding or removing data on the file system is reflected on the table. After adding the file its content is now automatically retrieved as table data. Try it out. Go back to the Beeswax table list and select the `country_list` again. Click on browse data on the left. You should see four countries which are read from the file. You can also query the table to get the same result. Go to the query editor and execute:
 
 ```sql
 SELECT * FROM country_list;
 ```
 
-###Drop a table###
+### Drop a table###
 You can drop the table in the table view of Beeswax through the graphic interface. Go to the query editor and execute the equivalent query to drop the table:
 
 ```sql
@@ -164,13 +164,13 @@ DROP TABLE country_list;
 The table and the HDFS directory and file(s) are deleted.
 
 
-##External Table##
+## External Table##
 So far the queries and behaviour of Hive has not been very different to SQL systems. Hive's separation of data location and storing the schema in a metastore enables it to create tables pointing to existing data, to read, query, and transform it, and then drop the tables without touching the original data on HDFS.
 
 These unmanaged tables make Hive powerful as a tool that queries outputs from other processes and systems. The terminology used is an extension of the SQL `CREATE TABLE` statement. Let us do the above example again with an external table instead to illustrate the difference.
 
 
-###Create an external table###
+### Create an external table###
 Create the external table by simply adding `EXTERNAL` to the statement:
 
 ```sql
@@ -193,7 +193,7 @@ DROP TABLE country_list;
 
 Go to the HDFS directory `/apps/hive/warehouse/country_list` to see the data and directory still intact.
 
-###(Re)Creating an external table###
+### (Re)Creating an external table###
 This means that we can create a table with the data on HDFS with a single statement:
 
 ```sql
@@ -208,12 +208,12 @@ SELECT * FROM country_list;
 
 
 <a id="settinguptheexampletable"></a>
-#4. Setting up the example table#
+# 4. Setting up the example table#
 ([⇪ Table of Contents](#toc))
 
 The following examples are based on World Bank data of development indicators of the last four decades. The data is freely available on the [World Bank website](http://databank.worldbank.org/). The data distributed with the book for the examples has been modified for use with Hive.
 
-##Create external table##
+## Create external table##
 
 ```sql
 CREATE EXTERNAL TABLE wdi 
@@ -244,7 +244,7 @@ The table is empty since we have not loaded any data yet. Hive created a folder 
 We first place the data on HDFS for Hive and then create an external table for the data. Upload the `wdi_data.tsv.gz` file to the new HDFS `/user/sandbox/wdi` folder. The file is now located on the distributed HDFS file system and can be read by Hadoop and Hive. The file is Gzip compressed as indicated by the `.gz` postfix. Hive recognises this format and automatically decompresses the file at query time.
 
 <a id="query"></a>
-#5. Query#
+# 5. Query#
 ([⇪ Table of Contents](#toc))
 
 We can check if the schema from the create statement aligns with the data we uploaded by either browsing the data from the Beeswax table interface or querying it:
@@ -255,7 +255,7 @@ SELECT * FROM wdi;
 
 The above statement returns all columns and all rows from the table `wdi`.
 
-##SELECT ... WHERE ...##
+## SELECT ... WHERE ...##
 
 HiveQL supports `WHERE` constraints on the `SELECT` statement. Let us reduce the selection to a specific indicator. The following query returns all rows for the indicator named `'Trade (% of GDP)'`:
 
@@ -279,7 +279,7 @@ SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
   `2011` IS NOT NULL;
 ```
 
-##SELECT ... ORDER BY ...##
+## SELECT ... ORDER BY ...##
 
 Which countries have the largest and smallest percentage of trade to GDP ratio? The result of the above query can be ordered by column(s) with the `ORDER BY ... (ASC|DESC)` statement. Postfixing the order statement with `ASC` or `DESC` will order it in ascending or descending order:
 
@@ -292,7 +292,7 @@ SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
 
 The downside on ordering globally with `ORDER BY` is that it is implemented using a single reducer. Consequently, ordering a large set of data can take a very long time. It 
 
-##SELECT ... SORT BY ...##
+## SELECT ... SORT BY ...##
 
 I cases where you only want to approximate the order and investigate the data the `SORT BY` statement can be used. It sorts the data by reducer and not globally, which can be much faster for large data sets.
 
@@ -303,7 +303,7 @@ SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
   SORT BY trade_2011 DESC;
 ```
 
-##SELECT ... DISTRIBUTE BY ...##
+## SELECT ... DISTRIBUTE BY ...##
 
 `DISTRIBUTE BY` tells Hive by which column to organise the data when it is sent to the reducers. We could instead of using `CLUSTER BY` in the previous example use `DISTRIBUTE BY` to ensure every reducer gets all the data for each indicator.
 
@@ -379,7 +379,7 @@ Examples where `CLUSTER BY` works excellent are the same as before; where global
 [Here be dragons]
 
 <a id="joiningtables"></a>
-#7. Joining Tables#
+# 7. Joining Tables#
 ([⇪ Table of Contents](#toc))
 
 ##Setup Data##
@@ -396,7 +396,7 @@ CREATE TABLE nato_countries (name STRING);
 Finally go to `/apps/hive/warehouse/nato_countries` and `/apps/hive/warehouse/oecd_countries` in the Hue filebrowser (or use the HDFS put command) and upload `nato_countries.tsv` and `oecd_countries.tsv` in the corresponding directories.
 
 
-##JOIN##
+## JOIN##
 
 Joins are very common operations to combine related tables and *join* them on a shared value.
 
@@ -422,7 +422,7 @@ ON n.name=o.name;")
 The results above show only rows that satisfy the JOIN, i.e. have a matching country name in both `nato_countries` and `oecd_countries`.
 
 
-##FULL OUTER JOIN##
+## FULL OUTER JOIN##
 
 An outer join ensures that the result contains a row for each input table. It does not matter if the left *or* the right side of the join has null values for a right *or* left part of the join.
 
@@ -438,21 +438,21 @@ FROM oecd_countries o
 FULL OUTER JOIN nato_countries n
 ON n.name=o.name;")
 
-##LEFT OUTER JOIN##
+## LEFT OUTER JOIN##
 
-##RIGHT OUTER JOIN##
+## RIGHT OUTER JOIN##
 
-##Optimising Joins##
-###Map JOIN###
+## Optimising Joins##
+### Map JOIN###
 `SET hive.auto.convert.join=true;`
-###Avoid NULL values in JOIN###
+### Avoid NULL values in JOIN###
 `... FROM y JOIN x ON y.a=x.a AND y.a IS NOT NULL ...`
 
 <a id="datastorageformats"></a>
-#8. Data Storage Formats#
+# 8. Data Storage Formats#
 ([⇪ Table of Contents](#toc))
 
-##TextFile##
+## TextFile##
 ```sql
 CREATE TABLE country (
 	name STRING,
@@ -481,11 +481,11 @@ Defining a TEXTFILE input format with comma as a delimiter would not return the 
 
 `"One`, `two`, `or three."`, `1.01`, and `2012`
 
-###Delimiters and Gotchas###
+### Delimiters and Gotchas###
 
-###Compression###
+### Compression###
 
-##SequenceFile##
+## SequenceFile##
 ```sql
 CREATE TABLE country (name STRING, population INT)
 STORED AS SequenceFile;
@@ -496,7 +496,7 @@ Hive stored its row data in the value part of the pairs. This format is more eff
 
 The disadvantage of this format is that Hive has to read and parse every row for every query (presuming no partitioning) to execute the query conditions against it. This can lead to unnecessary read operations if only some rows or some columns are relevant to the query.
 
-##RCFile##
+## RCFile##
 ```sql
 CREATE TABLE country (name STRING, population INT)
 STORED AS RCFile;
@@ -508,11 +508,11 @@ For example, a file may store rows 1-1,000 in the first group and row 1,001 to 2
 
 The benefit of grouping columns is a more efficient compression since similar data is near to each other. More importantly query conditions can be pushed down to read only relevant parts of a table. This is especially helpful with wide tables and queries that only apply to a few columns. In these cases Hive can skip large parts of the data to save IO and computing time.
 
-##ORC##
+## ORC##
 The ORC file format became generally available with Hive 0.11 although some of its features are yet to be fully realised. ORC should be considered as an alternative to RCFile. ORC goes beyond RCFile and introduces columnar optimised storage (e.g. variable length encoding for integers), large block sizes (better disk IO and fewer file with lower namenode load), basic statistics on columns in a file and simple file indices to skip whole row groups if they don't match a query.
 
 
-##Parquet##
+## Parquet##
 
 
 <a id="partitioning"></a>
