@@ -17,7 +17,7 @@ Lastly, you can not use the work commercially. You can contact me if you like to
 Thank you.
 
 ## About The Author ##
-[Christian Prokopp](http://uk.linkedin.com/in/prokopp) is a Data Scientist at [Rangespan](http://www.rangespan.com), and writes as [Blogger and Data Journalist](http://www.semantikoz.com/blog) in his spare time. Christian holds a BSc, MCom, PhD and has lived, worked and researched in three continents.
+[Christian Prokopp](http://uk.linkedin.com/in/prokopp) is a CDO, and writes as [Blogger and Data Journalist](http://www.semantikoz.com/blog) in his spare time. Christian holds a BSc, MCom, PhD and has lived, worked and researched in three continents.
 
 ## Why this book? ##
 This book was sparked by the need to give some tutorial material to business users at Rangespan. Christian has been working with Hive and Hadoop for the last two years. Giving access to Big Data to business stakeholder through a SQL-like interface has proved extremely valuable and popular. Facebook, a company with one of the largest data sets world-wide for example, heavily relies on Hive and Hadoop for data processing, insight and reporting with thousands of users accessing data spread across thousands of computers.
@@ -47,7 +47,7 @@ The book is work in progress and the TOC as well as the actual chapters will evo
 	* *SELECT ... SORT BY ...*
 	* *SELECT ... CLUSTER BY ...*
 	* *SELECT ... DISTRIBUTE BY ...*
-	
+
 6. **Normalize Tables**
 
 7. **[Joining Tables](#joiningtables)**
@@ -216,11 +216,11 @@ The following examples are based on World Bank data of development indicators of
 ## Create external table##
 
 ```sql
-CREATE EXTERNAL TABLE wdi 
+CREATE EXTERNAL TABLE wdi
 (
     country_name STRING,
     country_code STRING,
-    indicator_name STRING, 
+    indicator_name STRING,
     indicator_code STRING,
     `1960` FLOAT, `1961` FLOAT, `1962` FLOAT, `1963` FLOAT, `1964` FLOAT,
     `1965` FLOAT, `1966` FLOAT, `1967` FLOAT, `1968` FLOAT, `1969` FLOAT,
@@ -290,7 +290,7 @@ SELECT `country_name`, `2011` AS trade_2011 FROM wdi WHERE
   ORDER BY trade_2011 DESC;
 ```
 
-The downside on ordering globally with `ORDER BY` is that it is implemented using a single reducer. Consequently, ordering a large set of data can take a very long time. It 
+The downside on ordering globally with `ORDER BY` is that it is implemented using a single reducer. Consequently, ordering a large set of data can take a very long time. It
 
 ## SELECT ... SORT BY ...##
 
